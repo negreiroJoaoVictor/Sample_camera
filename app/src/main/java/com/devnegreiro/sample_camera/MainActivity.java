@@ -6,15 +6,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
 
     static final int REQUEST_IMAGE_CAPTURE = 1; // Unique identifier by the code to take a photo
+    String mCurrentPhotoPath; //store the "path" of the file
 
 
     @Override
@@ -56,6 +63,21 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(takePictureIntent,REQUEST_IMAGE_CAPTURE); //result is the photo which is taken
 
         }
+
+    }
+
+    private File createImageFile() throws IOException {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); ///create a string and initialises it with a timestamp
+        String imageFileName = "JPEG_" + timeStamp + "_"; //Concatenate the strings
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName,".jpg",storageDir); //prefix,suffix,directory
+
+       //Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath(); //this stores the filepath  in the variable
+        return image;
+
+
 
     }
 
