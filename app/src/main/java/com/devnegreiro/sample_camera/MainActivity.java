@@ -2,9 +2,12 @@ package com.devnegreiro.sample_camera;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.GnssAntennaInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -43,12 +46,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) { //run when the user returns from the camera
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { //run when the user returns from the camera
         super.onActivityResult(requestCode, resultCode, data);
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView_photo);
 
         if(requestCode == REQUEST_IMAGE_CAPTURE  && resultCode == RESULT_OK) { // check if that result is sucessful
+
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap); //show the bitmap image on-screen
@@ -60,7 +64,26 @@ public class MainActivity extends AppCompatActivity {
     private void dispatchTakePictureIntent(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); // create a new intent which will open a camera
         if(takePictureIntent.resolveActivity(getPackageManager()) != null) { // check if the intent will work
-            startActivityForResult(takePictureIntent,REQUEST_IMAGE_CAPTURE); //result is the photo which is taken
+
+
+
+            File photoFile = null; //Create the File where the photo should go
+            try {
+                photoFile = createImageFile();
+
+            } catch (IOException e) {
+                e.printStackTrace(); //Error occurred while creating the File
+            }
+
+            if(photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(
+                        this,
+                        "com.devnegreiro.android.fileprovider",
+                        photoFile
+                );
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent,REQUEST_IMAGE_CAPTURE); //result is the photo which is taken
+            }
 
         }
 
