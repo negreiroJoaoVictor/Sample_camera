@@ -5,8 +5,10 @@
     <!-- give app permission to use the device's camera  -->
     <uses-feature android:name="android.hardware.camera2" android:required="true" />
 
+
     <!-- provide a fully qualified file name where the camera app should save the photo-->
     <uses-feature android:name="android.permission.WRITE_EXTERNAL_STORAGE"  android:maxSdkVersion= "18" />
+   <!--  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
 
     <application
 
